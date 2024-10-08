@@ -1,3 +1,4 @@
+using BearerToken___demo_project;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using System.Security.Claims;
@@ -41,14 +42,14 @@ app.MapGet("/login", async context =>
     var claims = new Claim[]
     {
                     //Standard claims
-                    new Claim(ClaimTypes.Name, "Tore Nestenius"),
-                    new Claim(ClaimTypes.Country, "Sweden"),
-                    new Claim(ClaimTypes.Email, "tore@tn-data.se"),
+                    new(ClaimTypes.Name, "Tore Nestenius"),
+                    new (ClaimTypes.Country, "Sweden"),
+                    new (ClaimTypes.Email, "tore@tn-data.se"),
 
                     //Custom claims
-                    new Claim("JobTitle", "Consultant and trainer"),
-                    new Claim("JobLevel", "Senior"),
-                    new Claim("webpage", "https://www.tn-data.se"),
+                    new ("JobTitle", "Consultant and trainer"),
+                    new ("JobLevel", "Senior"),
+                    new ("webpage", "https://www.tn-data.se"),
     };
 
     var identity = new ClaimsIdentity(claims: claims, authenticationType: defaultSchema);
@@ -99,25 +100,33 @@ static void DumpUser(HttpContext context)
 {
     ClaimsPrincipal user = context.User;
 
-    context.Response.WriteAsync("<h3>Identities</h3>");
-    foreach (ClaimsIdentity identity in user.Identities)
+    if (user != null && user.Identities != null)
     {
-        context.Response.WriteAsync($"<h4>identity</h4>");
-        context.Response.WriteAsync($"Name: {user?.Identity?.Name ?? "null"}<br>");
-        context.Response.WriteAsync($"Is Authenticated: {user?.Identity?.IsAuthenticated}<br>");
-        context.Response.WriteAsync($"AuthenticationType: {user?.Identity?.AuthenticationType ?? "null"}<br>");
+        context.Response.WriteAsync("<h3>Identities</h3>");
+        foreach (ClaimsIdentity identity in user.Identities)
+        {
+            context.Response.WriteAsync($"<h4>identity</h4>");
+            context.Response.WriteAsync($"Name: {user?.Identity?.Name ?? "null"}<br>");
+            context.Response.WriteAsync($"Is Authenticated: {user?.Identity?.IsAuthenticated}<br>");
+            context.Response.WriteAsync($"AuthenticationType: {user?.Identity?.AuthenticationType ?? "null"}<br>");
+        }
     }
 
-    context.Response.WriteAsync("<h4>Claims</h4>");
-    context.Response.WriteAsync(@"<table>");
-    context.Response.WriteAsync(@"<thead><tr><th>Type</th><th>Value</th><th>Issuer</th></tr></thead>");
-    foreach (Claim claim in user.Claims)
+    if (user != null && user.Claims != null)
     {
-        context.Response.WriteAsync($"<tr>");
-        context.Response.WriteAsync($"<td>{claim.Type}</td>");
-        context.Response.WriteAsync($"<td>{claim.Value}</td>");
-        context.Response.WriteAsync($"<td>{claim.Issuer}</td>");
-        context.Response.WriteAsync($"</tr>");
+        context.Response.WriteAsync("<h4>Claims</h4>");
+        context.Response.WriteAsync(@"<table>");
+        context.Response.WriteAsync(@"<thead><tr><th>Type</th><th>Value</th><th>Issuer</th></tr></thead>");
+
+        foreach (Claim claim in user.Claims)
+        {
+            context.Response.WriteAsync($"<tr>");
+            context.Response.WriteAsync($"<td>{claim.Type}</td>");
+            context.Response.WriteAsync($"<td>{claim.Value}</td>");
+            context.Response.WriteAsync($"<td>{claim.Issuer}</td>");
+            context.Response.WriteAsync($"</tr>");
+        }
+
+        context.Response.WriteAsync($"</table>");
     }
-    context.Response.WriteAsync($"</table>");
 }

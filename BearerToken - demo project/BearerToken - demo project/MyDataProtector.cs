@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 
+namespace BearerToken___demo_project;
 
 /// <summary>
 /// Custom transparent DataProtector that will encrypt the data
